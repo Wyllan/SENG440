@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);
 	}
-	char* rgb[W][H][BGR];
+	int rgb[W][H][BGR];
 	char* token_comma;
 //	char* token_space;
 	char* end_comma;
@@ -21,19 +21,26 @@ int main(int argc, char *argv[]) {
 	int i=0;
        	int j=0;
 	int k=0;
-	while (fgets(line, sizeof line, fp) != NULL || i < W){
-		token_comma = strtok_r(line, ",", &end_comma);
-		while (token_comma != NULL || j < H) {
+	while ((fgets(line, sizeof line, fp) != NULL) ||  i < W){
+		char *newline=strtok(line,"\n");	
+		token_comma = strtok_r(newline, ",", &end_comma);
+		//printf("%s\n", end_comma);
+		j=0;
+		while ((token_comma != NULL) || j < H) {
 			char *end_space;
+			//printf("%d", j);
 			char *token_space = strtok_r(token_comma, " ", &end_space);
 			//printf("%s\n", token_space);
-			while (token_space != NULL || k < BGR) {
-				//rgb[i][j][k] = token_space;
-				printf("%s ", token_space);
+			k=0;
+			while ((token_space != NULL)|| k<BGR) {
+				//printf("%d", k);
+				//printf("%d %d %d\n",i,j,k);
+				rgb[i][j][k] = atoi(token_space);
+	//			printf("%d ", rgb[i][j][k]);
 				token_space = strtok_r(NULL, " ", &end_space);
 				k++;
 			}
-			printf("\n");
+	///		printf("\n");
 			//printf("%s\n", token_comma);
 			token_comma = strtok_r(NULL, ",", &end_comma);
 			j++;
@@ -43,7 +50,7 @@ int main(int argc, char *argv[]) {
 		i++;
 
 	}
-
+	fclose(fp);
 	
 
 
@@ -55,15 +62,16 @@ int main(int argc, char *argv[]) {
 
 
 
-
-	/*int i,j,k;
-	for (i=0;i<W;i++){
-		for (j=0;j<H;j++) {
-			for (k=0;k<BGR;k++){
-				//	
+	///The actual reading image part
+	int x,y,z;
+	for (x=0;x<W;x++){
+		for (y=0;y<H;y++) {
+			for (z=0;z<BGR;z++){
+				printf("%d ", rgb[x][y][z]);
 			}
+			printf("\n");
 		}
-	}*/
-	fclose(fp);
+	}
+//	fclose(fp);
 	return 0;
 }

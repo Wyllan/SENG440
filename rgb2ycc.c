@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <string.h> 
 #include <stdlib.h>
+#include <libattopng.h>
 
 #define W 255
 #define H 255
 #define BGR 3
+#define RGBA(r, g, b, a) ((r) | ((g) << 8) | ((b) << 16) | ((a) << 24))
+#define RGB(r, g, b) RGBA(r, g, b, 0xff)
 
 // Takes in a value, a lower bound, and an upper bound
 // Saturation arithmetic (clamping)
@@ -166,5 +169,33 @@ int main(int argc, char *argv[]) {
 	// 	}
 	// }
 //	fclose(fp);
+	//return 0;
+
+
+
+
+
+
+	libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);
+	uint32_t palette[] = {
+		RGBA(0, 0, 0xff, 0xff),
+		RGBA(0, 0xff, 0, 0x80),
+		RGBA(0xff, 0, 0, 0xff),
+		RGBA(0xff, 0, 0xff, 0x80)
+	};
+	libattopng_set_palette(png, palette, 4);
+
+	png = libattopng_new(W, H, PNG_RGB);
+	int p=0;
+	int q=0;
+	for (p = 0; p < H; p++) {
+		for (q = 0; q < W; q++) {
+			libattopng_set_pixel(png, p, q, RGB(rgb[p][q][0] & 255, rgb[p][q][1] & 255, rgb[p][q][2] & 255));
+			//printf("%" PRIx32 ",", RGB(x & 255, y & 255, 128) );
+		}
+		//printf("\n");
+	}
+	libattopng_save(png, "supposeycc.png");
+	libattopng_destroy(png);
 	return 0;
 }

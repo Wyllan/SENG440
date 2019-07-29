@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
 	for (x=0;x<W;x++){
 		for (y=0;y<H;y++) {
 			for (z=0;z<BGR;z++){
+				//TODO: insert the rgb2ycc functions
 				printf("%d ", rgb[x][y][z]);
 			}
 			printf("\n");

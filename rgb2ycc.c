@@ -173,7 +173,7 @@ int main(int argc, char *argv[]) {
 	RGBtoYCC(rgb,ycc);
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	// printf("%d ", rgb[x][y][z]);
-	YCCtoRGB(ycc,rgb);
+	// YCCtoRGB(ycc,rgb);
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	// printf("%d ", rgb[x][y][z]);
 	// 		}
@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
 	int q=0;
 	for (p = 0; p < H; p++) {
 		for (q = 0; q < W; q++) {
-			libattopng_set_pixel(png, p, q, RGB(rgb[p][q][0] & 255, rgb[p][q][1] & 255, rgb[p][q][2] & 255));
+			libattopng_set_pixel(png, p, q, RGB(ycc[p][q][0] & 255, ycc[p][q][1] & 255, ycc[p][q][2] & 255));
 			//printf("%" PRIx32 ",", RGB(x & 255, y & 255, 128) );
 		}
 		//printf("\n");

@@ -60,10 +60,10 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H/4][BGR]) {
 			ycc[i][j][1] = check_range(ycc[i][j][1], 16, 240);
 			ycc[i][j][2] = check_range(ycc[i][j][2], 16, 240);
 
-			// if (i < 5 && j == 0) {
-				// printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-				// printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
-			// }
+			if (i < 5 && j == 0) {
+				printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
+				printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
+			}
 		}
 	}
 	// printf("\n");

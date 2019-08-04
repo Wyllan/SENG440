@@ -28,7 +28,7 @@ int rounding(int x) {
 	else return x;
 }
 
-void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
+void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H/4][BGR]) {
 
 	int i, j;
 	int r, g, b;
@@ -46,8 +46,10 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 
 			ycc[i][j][0] = rounding(16000 + 257*r + 504*g + 98*b) / 1000;
 			// ycc[i][j][0] = 16.0 + 0.257*r + 0.504*g + 0.098*b;
-			ycc[i][j][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
-			ycc[i][j][2] = rounding(128000 + 439*r - 368*g - 71*b) / 1000;
+			if(j % 4 == 3) {
+				ycc[i][j/4][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
+				ycc[i][j/4][2] = rounding(128000 + 439*r - 368*g - 71*b) / 1000;
+			}
 
 			// if(j % 4 == 3) {
 			// 	ycc[i][j/4][1] = ycc[i][j/4][1] >> 2;
@@ -59,15 +61,15 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 			ycc[i][j][2] = check_range(ycc[i][j][2], 16, 240);
 
 			// if (i < 5 && j == 0) {
-			// 	printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-			// 	printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
+				// printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
+				// printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
 			// }
 		}
 	}
 	// printf("\n");
 }
 
-void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
+void YCCtoRGB(int ycc[W][H/4][BGR], int rgb[W][H][BGR]) {
 
 	int i, j;
 	int y, cr, cb;
@@ -75,8 +77,8 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 		for(j = 0; j < H; j++) {
 			if( i == 0 && j == 0) printf("\nthis: %d %d %d \n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
 			y = ycc[i][j][0] - 16;
-			cb = ycc[i][j][1] - 128;
-			cr = ycc[i][j][2] - 128;
+			cb = ycc[i][j/4][1] - 128;
+			cr = ycc[i][j/4][2] - 128;
 
 			// rgb[i][j][0] = (76284 * y  + 104595 * cr + 32768) >> 16;
 			// rgb[i][j][1] = (76284 * y - 25690 * cr - 53281 * cb + 32768) >> 16;

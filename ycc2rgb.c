@@ -107,7 +107,7 @@ int interpolate(int val, int i, int j) {
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
-	fp = fopen("rgbMatrix.txt", "r"); // read mode
+	fp = fopen("yccMatrix.txt", "r"); // read mode
 	if (fp == NULL){
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);

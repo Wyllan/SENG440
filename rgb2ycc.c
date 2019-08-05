@@ -96,11 +96,9 @@ int main(int argc, char *argv[]) {
 	for (p = 0; p < H; p++) {
 		for (q = 0; q < W; q++) {
 			libattopng_set_pixel(png, p, q, RGB(ycc[p][q][0] & 255, ycc[p][q][1] & 255, ycc[p][q][2] & 255));
-			//printf("%" PRIx32 ",", RGB(x & 255, y & 255, 128) );
 		}
-		//printf("\n");
 	}
-	libattopng_save(png, "supposeycc.png");
+	libattopng_save(png, "out_ycc.png");
 	libattopng_destroy(png);
 	return 0;
 }

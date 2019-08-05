@@ -29,6 +29,44 @@ int rounding(int x) {
 		return x;
 }
 
+void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
+
+	int i, j, temp;
+	int r, g, b;
+	printf("  %d %d %d\n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
+	for(i = 0; i < W; i++) {
+		for (j = 0; j < H; j++) {
+			r = rgb[i][j][0];
+			g = rgb[i][j][1];
+			b = rgb[i][j][2];
+
+			// ycc[i][j][0] = 16 + (16843*r + 33030*g + 6423*b ) >> 16;
+			// ycc[i][j][1] = 128 + (-9699*r - 19071*g + 28770*b ) >> 16;
+			// ycc[i][j][2] = 128 + (28770*r - 24117*g - 4653*b ) >> 16;
+			
+			ycc[i][j][0] = (16000 + 257*r + 504*g + 98*128) / 1000;
+			ycc[i][j][0] = check_range(ycc[i][j][0], 16, 235);
+
+			if(j % 4 == 0) {
+				temp = j/4;
+				ycc[i][temp][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
+				ycc[i][temp][1] = check_range(ycc[i][temp][1], 16, 240);
+			
+				ycc[i][temp][2] = rounding(128000 + 439*r - 368*g - 71*b) / 1000;
+				ycc[i][temp][2] = check_range(ycc[i][temp][2], 16, 240);
+			}
+
+			if (i < 5 && j == 0) {
+				printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
+				printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
+			}
+			if( i == W-1 && j == H-1) printf("\n - YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			if( i == W-1 && j == H-1) printf("\nvalues: %d %d %d \n\n", i,j,temp);
+		}
+	}
+	printf("  %d %d %d\n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
+}
+
 void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
 	int i, j, temp;
@@ -61,7 +99,7 @@ int interpolate(int val, int i, int j) {
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
-	fp = fopen("yccMatrix.txt", "r"); // read mode
+	fp = fopen("rgbMatrix.txt", "r"); // read mode
 	if (fp == NULL){
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);
@@ -78,7 +116,7 @@ int main(int argc, char *argv[]) {
 			char *end_space;
 			char *token_space = strtok_r(token_comma, " ", &end_space);
 			for (k = 0; (token_space != NULL) || k < BGR; k++) {
-				ycc[i][j][k] = atoi(token_space);
+				rgb[i][j][k] = atoi(token_space);
 				token_space = strtok_r(NULL, " ", &end_space);
 			}
 			token_comma = strtok_r(NULL, ",", &end_comma);
@@ -88,6 +126,7 @@ int main(int argc, char *argv[]) {
 
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	// printf("%d ", rgb[x][y][z]);
+	RGBtoYCC(rgb,ycc);
 	YCCtoRGB(ycc,rgb);
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 

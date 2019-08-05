@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 			char *end_space;
 			char *token_space = strtok_r(token_comma, " ", &end_space);
 			for (k = 0; (token_space != NULL) || k < BGR; k++) {
-				rgb[i][j][k] = atoi(token_space);
+				ycc[i][j][k] = atoi(token_space);
 				token_space = strtok_r(NULL, " ", &end_space);
 			}
 			token_comma = strtok_r(NULL, ",", &end_comma);
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	// printf("%d ", rgb[x][y][z]);
-	// YCCtoRGB(ycc,rgb);
+	YCCtoRGB(ycc,rgb);
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 
     //Create the image

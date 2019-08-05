@@ -25,7 +25,7 @@ int check_range(int val, int lb, int ub) {
 int rounding(int x) {
 	// if (x % 1000 > 499)
 	// 	return x;
-	// else 
+	// else
 		return x;
 }
 
@@ -71,6 +71,7 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
 	int i, j, temp;
 	int y, cr, cb;
+	printf("\n ?YCC: %d %d %d \n\n", ycc[254][254][0], ycc[254][62][1], ycc[254][62][2]);
 	for(i = 0; i < W; i++) {
 		for(j = 0; j < H; j++) {
 			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
@@ -81,6 +82,10 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 				cr = ycc[i][temp][2] - 128;
 			}
 
+			// rgb[i][j][0] = (76284 * y  + 104595 * cr + 32768) >> 16;
+			// rgb[i][j][1] = (76284 * y - 25690 * cr - 53281 * cb + 32768) >> 16;
+			// rgb[i][j][2] = (76284 * y + 135725 * cb + 32768) >> 16;
+
 			rgb[i][j][0] = (1164 * y + 1596 * cr) / 1000;
 			rgb[i][j][1] = (1164 * y - 813 * cr - 391 * cb) / 1000;
 			rgb[i][j][2] = (1164 * y + 2018 * cb) / 1000;
@@ -88,6 +93,14 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 			rgb[i][j][0] = check_range(rgb[i][j][0], 0, 255);
 			rgb[i][j][1] = check_range(rgb[i][j][1], 0, 255);
 			rgb[i][j][2] = check_range(rgb[i][j][2], 0, 255);
+
+			if (i < 5 && j < 5) {
+				printf("%d %d %d \n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+				printf("%d %d %d \n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
+			}
+			if (i < 5 && j == 5) printf("\n");
+			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			if( i == W-1 && j == H-1) printf("\n RGB: %d %d %d \n\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
 		}
 	}
 }
@@ -123,12 +136,19 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	fclose(fp);
+	
 
-	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
-	// printf("%d ", rgb[x][y][z]);
-	RGBtoYCC(rgb,ycc);
+
+	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
+	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
+	RGBtoYCC(rgb, ycc);
+	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
+	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	YCCtoRGB(ycc,rgb);
-	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
+	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
+	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
+
+
 
     //Create the image
     libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);

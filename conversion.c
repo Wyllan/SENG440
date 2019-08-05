@@ -25,8 +25,8 @@ int check_range(int val, int lb, int ub) {
 int rounding(int x) {
 	// if (x % 1000 > 499)
 	// 	return x;
-	// else return x;
-	return x;
+	// else
+		return x;
 }
 
 void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {

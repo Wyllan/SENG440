@@ -47,7 +47,7 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 			ycc[i][j][0] = (16000 + 257*r + 504*g + 98*128) / 1000;
 			ycc[i][j][0] = check_range(ycc[i][j][0], 16, 235);
 
-			if(j % 4 == 3) {
+			if(j % 4 == 0) {
 				temp = j/4;
 				ycc[i][temp][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
 				ycc[i][temp][1] = check_range(ycc[i][temp][1], 16, 240);
@@ -60,44 +60,49 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 				printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
 				printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
 			}
+			if( i == W-1 && j == H-1) printf("\n - YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			if( i == W-1 && j == H-1) printf("\nvalues: %d %d %d \n\n", i,j,temp);
 		}
-		
 	}
-
 	printf("  %d %d %d\n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 }
 
 void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
-	int i, j;
+	int i, j, temp;
 	int y, cr, cb;
+	printf("\n ?YCC: %d %d %d \n\n", ycc[254][254][0], ycc[254][62][1], ycc[254][62][2]);
 	for(i = 0; i < W; i++) {
 		for(j = 0; j < H; j++) {
-			if( i == 0 && j == 0) printf("\nthis: %d %d %d \n\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
-			y = ycc[i][j][0] - 16; 
-			cb = ycc[i][j/4][1] - 128;
-			cr = ycc[i][j/4][2] - 128;
+			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			y = ycc[i][j][0] - 16;
+			if( j % 4 == 0) {
+				temp = j/4;
+				cb = ycc[i][temp][1] - 128;
+				cr = ycc[i][temp][2] - 128;
+			}
 
 			// rgb[i][j][0] = (76284 * y  + 104595 * cr + 32768) >> 16;
 			// rgb[i][j][1] = (76284 * y - 25690 * cr - 53281 * cb + 32768) >> 16;
 			// rgb[i][j][2] = (76284 * y + 135725 * cb + 32768) >> 16;
 
-			rgb[i][j][0] = rounding(1164 * y + 1596 * cr) / 1000;
-			rgb[i][j][1] = rounding(1164 * y - 813 * cr - 391 * cb) / 1000;
-			rgb[i][j][2] = rounding(1164 * y + 2018 * cb) / 1000;
+			rgb[i][j][0] = (1164 * y + 1596 * cr) / 1000;
+			rgb[i][j][1] = (1164 * y - 813 * cr - 391 * cb) / 1000;
+			rgb[i][j][2] = (1164 * y + 2018 * cb) / 1000;
 
 			rgb[i][j][0] = check_range(rgb[i][j][0], 0, 255);
 			rgb[i][j][1] = check_range(rgb[i][j][1], 0, 255);
 			rgb[i][j][2] = check_range(rgb[i][j][2], 0, 255);
 
-			if (i < 5 && j == 0) {
+			if (i < 5 && j < 5) {
+				printf("%d %d %d \n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
 				printf("%d %d %d \n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-				printf("%d %d %d \n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
 			}
+			if (i < 5 && j == 5) printf("\n");
+			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			if( i == W-1 && j == H-1) printf("\n RGB: %d %d %d \n\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
 		}
 	}
-
-
 }
 
 int interpolate(int val, int i, int j) {
@@ -107,7 +112,7 @@ int interpolate(int val, int i, int j) {
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
-	fp = fopen("yccMatrix.txt", "r"); // read mode
+	fp = fopen("rgbMatrix.txt", "r"); // read mode
 	if (fp == NULL){
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);
@@ -124,7 +129,7 @@ int main(int argc, char *argv[]) {
 			char *end_space;
 			char *token_space = strtok_r(token_comma, " ", &end_space);
 			for (k = 0; (token_space != NULL) || k < BGR; k++) {
-				ycc[i][j][k] = atoi(token_space);
+				rgb[i][j][k] = atoi(token_space);
 				token_space = strtok_r(NULL, " ", &end_space);
 			}
 			token_comma = strtok_r(NULL, ",", &end_comma);
@@ -136,10 +141,10 @@ int main(int argc, char *argv[]) {
 
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
-	YCCtoRGB(ycc,rgb);
+	RGBtoYCC(rgb, ycc);
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
-	RGBtoYCC(rgb, ycc);
+	YCCtoRGB(ycc,rgb);
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 

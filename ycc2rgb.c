@@ -31,14 +31,17 @@ int rounding(int x) {
 
 void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
-	int i, j;
+	int i, j, temp;
 	int y, cr, cb;
 	for(i = 0; i < W; i++) {
 		for(j = 0; j < H; j++) {
-			if( i == 0 && j == 0) printf("\nthis: %d %d %d \n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
+			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
 			y = ycc[i][j][0] - 16;
-			cb = ycc[i][j][1] - 128;
-			cr = ycc[i][j][2] - 128;
+			if( j % 4 == 0) {
+				temp = j/4;
+				cb = ycc[i][temp][1] - 128;
+				cr = ycc[i][temp][2] - 128;
+			}
 
 			rgb[i][j][0] = (1164 * y + 1596 * cr) / 1000;
 			rgb[i][j][1] = (1164 * y - 813 * cr - 391 * cb) / 1000;
@@ -47,11 +50,8 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 			rgb[i][j][0] = check_range(rgb[i][j][0], 0, 255);
 			rgb[i][j][1] = check_range(rgb[i][j][1], 0, 255);
 			rgb[i][j][2] = check_range(rgb[i][j][2], 0, 255);
-
 		}
 	}
-
-
 }
 
 int interpolate(int val, int i, int j) {

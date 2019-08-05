@@ -1,2 +1,2 @@
-make -f CMakeFiles/working_conversion.dir/build.make CMakeFiles/working_conversion.dir/rgb2ycc.c.s
-make -f CMakeFiles/optimized_conversion.dir/build.make CMakeFiles/optimized_conversion.dir/conversion.c.s
+make -f CMakeFiles/working_rgb2ycc.dir/build.make CMakeFiles/working_rgb2ycc.dir/rgb2ycc.c.s
+make -f CMakeFiles/working_ycc2rgb.dir/build.make CMakeFiles/working_ycc2rgb.dir/ycc2rgb.c.s

@@ -49,6 +49,7 @@ int interpolate(int val, int i, int j) {
 }
 
 int main(int argc, char *argv[]) {
+        //Read list
 	FILE *fp;
 	fp = fopen("rgbMatrix.txt", "r"); // read mode
 	if (fp == NULL){
@@ -79,11 +80,7 @@ int main(int argc, char *argv[]) {
 	RGBtoYCC(rgb,ycc);
 	// printf("\n%d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 
-
-
-
-
-
+    //Create the image
 	libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);
 	uint32_t palette[] = {
 		RGBA(0, 0, 0xff, 0xff),

@@ -28,45 +28,6 @@ int rounding(int x) {
 	else return x;
 }
 
-void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
-
-	int i, j;
-	int r, g, b;
-	for(i = 0; i < W; i++) {
-		for (j = 0; j < H; j++) {
-			r = rgb[i][j][0];
-			// r = (int) (rgb[i][j][0] < 12 ? 0 : rgb[i][j][0]) << 8;
-			g = rgb[i][j][1];
-			b = rgb[i][j][2];
-
-			// ycc[i][j][0] = 4096 + (16843*r + 33030*g + 6423*b >> 16) >> 8;
-			// ycc[i][j][0] = 16 + (16843*r + 33030*g + 6423*b ) >> 16;
-			// ycc[i][j][1] = 128 + (-9699*r - 19071*g + 28770*b ) >> 16;
-			// ycc[i][j][2] = 128 + (28770*r - 24117*g - 4653*b ) >> 16;
-
-			ycc[i][j][0] = rounding(16000 + 257*r + 504*g + 98*b) / 1000;
-			// ycc[i][j][0] = 16.0 + 0.257*r + 0.504*g + 0.098*b;
-			ycc[i][j][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
-			ycc[i][j][2] = rounding(128000 + 439*r - 368*g - 71*b) / 1000;
-
-			// if(j % 4 == 3) {
-			// 	ycc[i][j/4][1] = ycc[i][j/4][1] >> 2;
-			// 	ycc[i][j/4][2] = ycc[i][j/4][2] >> 2;
-			// }
-
-			ycc[i][j][0] = check_range(ycc[i][j][0], 16, 235);
-			ycc[i][j][1] = check_range(ycc[i][j][1], 16, 240);
-			ycc[i][j][2] = check_range(ycc[i][j][2], 16, 240);
-
-			// if (i < 5 && j == 0) {
-			// 	printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-			// 	printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
-			// }
-		}
-	}
-	// printf("\n");
-}
-
 void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
 	int i, j;
@@ -107,7 +68,7 @@ int interpolate(int val, int i, int j) {
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
-	fp = fopen("rgbMatrix.txt", "r"); // read mode
+	fp = fopen("yccMatrix.txt", "r"); // read mode
 	if (fp == NULL){
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);
@@ -151,18 +112,11 @@ int main(int argc, char *argv[]) {
 
 	}
 	fclose(fp);
-	
-
-
-
-
-
-
 
 
 	// rgb = {255, 255, 255};
 	// ycc = 
-
+    //convert RGB to YCC
 	///The actual reading image part
 	// int x,y,z;
 	// for (x=0;x<W;x++){
@@ -183,12 +137,8 @@ int main(int argc, char *argv[]) {
 //	fclose(fp);
 	//return 0;
 
-
-
-
-
-
-	libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);
+    //Create the image
+    libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);
 	uint32_t palette[] = {
 		RGBA(0, 0, 0xff, 0xff),
 		RGBA(0, 0xff, 0, 0x80),
@@ -207,7 +157,7 @@ int main(int argc, char *argv[]) {
 		}
 		//printf("\n");
 	}
-	libattopng_save(png, "supposeycc.png");
+	libattopng_save(png, "supposergb.png");
 	libattopng_destroy(png);
 	return 0;
 }

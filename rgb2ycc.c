@@ -67,45 +67,13 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 	// printf("\n");
 }
 
-void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
-
-	int i, j;
-	int y, cr, cb;
-	for(i = 0; i < W; i++) {
-		for(j = 0; j < H; j++) {
-			if( i == 0 && j == 0) printf("\nthis: %d %d %d \n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
-			y = ycc[i][j][0] - 16;
-			cb = ycc[i][j][1] - 128;
-			cr = ycc[i][j][2] - 128;
-
-			// rgb[i][j][0] = (76284 * y  + 104595 * cr + 32768) >> 16;
-			// rgb[i][j][1] = (76284 * y - 25690 * cr - 53281 * cb + 32768) >> 16;
-			// rgb[i][j][2] = (76284 * y + 135725 * cb + 32768) >> 16;
-
-			rgb[i][j][0] = rounding(1164 * y + 1596 * cr) / 1000;
-			rgb[i][j][1] = rounding(1164 * y - 813 * cr - 391 * cb) / 1000;
-			rgb[i][j][2] = rounding(1164 * y + 2018 * cb) / 1000;
-
-			rgb[i][j][0] = check_range(rgb[i][j][0], 0, 255);
-			rgb[i][j][1] = check_range(rgb[i][j][1], 0, 255);
-			rgb[i][j][2] = check_range(rgb[i][j][2], 0, 255);
-
-			// if (i < 5 && j == 0) {
-			// 	printf("%d %d %d \n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-			// 	printf("%d %d %d \n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
-			// }
-		}
-	}
-
-
-}
-
 int interpolate(int val, int i, int j) {
 	// but actually just give same value
 	return val;
 }
 
 int main(int argc, char *argv[]) {
+        //Read list
 	FILE *fp;
 	fp = fopen("rgbMatrix.txt", "r"); // read mode
 	if (fp == NULL){
@@ -162,7 +130,7 @@ int main(int argc, char *argv[]) {
 
 	// rgb = {255, 255, 255};
 	// ycc = 
-
+    // Convert RGB Values to YCC
 	///The actual reading image part
 	// int x,y,z;
 	// for (x=0;x<W;x++){
@@ -183,11 +151,7 @@ int main(int argc, char *argv[]) {
 //	fclose(fp);
 	//return 0;
 
-
-
-
-
-
+    //Create the image
 	libattopng_t *png = libattopng_new(W, H, PNG_PALETTE);
 	uint32_t palette[] = {
 		RGBA(0, 0, 0xff, 0xff),

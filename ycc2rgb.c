@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
 		}
 		//printf("\n");
 	}
-	libattopng_save(png, "supposeycc.png");
+	libattopng_save(png, "supposergb.png");
 	libattopng_destroy(png);
 	return 0;
 }

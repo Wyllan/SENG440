@@ -6,6 +6,7 @@
 #define W 255
 #define H 255
 #define H_down 63
+#define W_down 63
 #define BGR 3
 #define RGBA(r, g, b, a) ((r) | ((g) << 8) | ((b) << 16) | ((a) << 24))
 #define RGB(r, g, b) RGBA(r, g, b, 0xff)
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
 	char line[W*H];
 	int i, j, k;
 	for(i = 0; (fgets(line, sizeof line, fp) != NULL) || i < W; i++){
-		char *newline=strtok(line,"\n");	
+		char *newline=strtok(line,"\n");
 		token_comma = strtok_r(newline, ",", &end_comma);
 		for(j = 0; (token_comma != NULL) || j < H; j++) {
 			char *end_space;
@@ -35,12 +36,12 @@ int main(int argc, char *argv[]) {
 			token_comma = strtok_r(NULL, ",", &end_comma);
 		}
 	}
-	fclose(fp);	
+	fclose(fp);
 
     int temp;
     uint8_t r, g, b;
-    for(i = 0; i < W; i++) {
-        for (j = 0; j < H; j++) {
+    for(i = W; i != 0; i--) {
+        for (j = H; j != 0; j--) {
             r = rgb[i][j][0];
             g = rgb[i][j][1];
             b = rgb[i][j][2];
@@ -81,8 +82,7 @@ int main(int argc, char *argv[]) {
 
     libattopng_t *png = libattopng_new(W, H_down, PNG_RGB);
 
-	int p=0;
-	int q=0;
+	int p,q;
 
 	for (p = 0; p < W; p++) {
 		for (q = 0; q < H_down; q++) {

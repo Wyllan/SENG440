@@ -31,7 +31,7 @@ int rounding(int x) {
 
 void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 
-	int i, j, temp;
+	int i, j, temp_i, temp_j;
 	int r, g, b;
 	printf("  %d %d %d\n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	for(i = 0; i < W; i++) {
@@ -47,21 +47,15 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 			ycc[i][j][0] = (16000 + 257*r + 504*g + 98*128) / 1000;
 			ycc[i][j][0] = check_range(ycc[i][j][0], 16, 235);
 
-			if(j % 4 == 0) {
-				temp = j/4;
-				ycc[i][temp][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
-				ycc[i][temp][1] = check_range(ycc[i][temp][1], 16, 240);
+			if(j % 2 == 0 || i % 2 == 0) {
+				temp_i = i/2;
+				temp_j = j/2;
+				ycc[temp_i][temp_j][1] = rounding(128000 - 148*r - 291*g + 439*b) / 1000;
+				ycc[temp_i][temp_j][1] = check_range(ycc[temp_i][temp_j][1], 16, 240);
 			
-				ycc[i][temp][2] = rounding(128000 + 439*r - 368*g - 71*b) / 1000;
-				ycc[i][temp][2] = check_range(ycc[i][temp][2], 16, 240);
+				ycc[temp_i][temp_j][2] = rounding(128000 + 439*r - 368*g - 71*b) / 1000;
+				ycc[temp_i][temp_j][2] = check_range(ycc[temp_i][temp_j][2], 16, 240);
 			}
-
-			if (i < 5 && j == 0) {
-				printf("%d %d %d\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-				printf("%d %d %d\n", ycc[i][j][0], ycc[i][j][1], ycc[i][j][2]);
-			}
-			if( i == W-1 && j == H-1) printf("\n - YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
-			if( i == W-1 && j == H-1) printf("\nvalues: %d %d %d \n\n", i,j,temp);
 		}
 	}
 	printf("  %d %d %d\n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
@@ -69,23 +63,19 @@ void RGBtoYCC(int rgb[W][H][BGR], int ycc[W][H][BGR]) {
 
 void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
-	int i, j, temp;
+	int i, j, temp_i, temp_j;
 	int y, cr, cb;
-	printf("\n ?YCC: %d %d %d \n\n", ycc[254][254][0], ycc[254][63][1], ycc[254][63][2]);
+
 	for(i = 0; i < W; i++) {
 		for(j = 0; j < H; j++) {
-			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
-			if( i == W-1 && j == H-1) printf("\n temp: %d \n\n", temp);
-			y = ycc[i][j][0] - 16;
-			if( j % 4 == 0) {
-				temp = j/4;
-				cb = ycc[i][temp][1] - 128;
-				cr = ycc[i][temp][2] - 128;
-			}
 
-			// rgb[i][j][0] = (76284 * y  + 104595 * cr + 32768) >> 16;
-			// rgb[i][j][1] = (76284 * y - 25690 * cr - 53281 * cb + 32768) >> 16;
-			// rgb[i][j][2] = (76284 * y + 135725 * cb + 32768) >> 16;
+			y = ycc[i][j][0] - 16;
+			if( i % 2 == 0 || j % 2 == 0) {
+				temp_i = i/2;
+				temp_j = j/2;
+				cb = ycc[temp_i][temp_j][1] - 128;
+				cr = ycc[temp_i][temp_j][2] - 128;
+			}
 
 			rgb[i][j][0] = (1164 * y + 1596 * cr) / 1000;
 			rgb[i][j][1] = (1164 * y - 813 * cr - 391 * cb) / 1000;
@@ -95,13 +85,6 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 			rgb[i][j][1] = check_range(rgb[i][j][1], 0, 255);
 			rgb[i][j][2] = check_range(rgb[i][j][2], 0, 255);
 
-			// if (i < 5 && j < 5) {
-			// 	printf("%d %d %d \n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
-			// 	printf("%d %d %d \n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-			// }
-			// if (i < 5 && j == 5) printf("\n");
-			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
-			if( i == W-1 && j == H-1) printf("\n RGB: %d %d %d \n\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
 		}
 	}
 }
@@ -113,7 +96,7 @@ int interpolate(int val, int i, int j) {
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
-	fp = fopen("yccMatrix.txt", "r"); // read mode
+	fp = fopen("rgbMatrix.txt", "r"); // read mode
 	if (fp == NULL){
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);
@@ -130,7 +113,7 @@ int main(int argc, char *argv[]) {
 			char *end_space;
 			char *token_space = strtok_r(token_comma, " ", &end_space);
 			for (k = 0; (token_space != NULL) || k < BGR; k++) {
-				ycc[i][j][k] = atoi(token_space);
+				rgb[i][j][k] = atoi(token_space);
 				token_space = strtok_r(NULL, " ", &end_space);
 			}
 			token_comma = strtok_r(NULL, ",", &end_comma);
@@ -142,7 +125,7 @@ int main(int argc, char *argv[]) {
 
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
-	//RGBtoYCC(rgb, ycc);
+	RGBtoYCC(rgb, ycc);
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	YCCtoRGB(ycc,rgb);
@@ -166,7 +149,7 @@ int main(int argc, char *argv[]) {
 	int q=0;
 	for (p = 0; p < H; p++) {
 		for (q = 0; q < W; q++) {
-			libattopng_set_pixel(png, p, q, RGB(rgb[p][q][0] & 255, rgb[p][q][1] & 255, rgb[p][q][2] & 255));
+			libattopng_set_pixel(png, p, q, RGB(rgb[q][p][0] & 255, rgb[q][p][1] & 255, rgb[q][p][2] & 255));
 			// printf("%" PRIx32 ",", RGB(x & 255, y & 255, 128) );
 		}
 		//printf("\n");

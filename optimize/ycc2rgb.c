@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
 
 	uint32_t y, cr, cb;
 
-	for(i = 0; i < N; i++) {
-		for(j = 0; j < N; j++) {
+	for(i = N-1; i; i--) {
+		for(j = N-1; j; j--) {
 
 			y = 1164 * (ycc[i][j][0] - 16);
 

@@ -71,10 +71,11 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 
 	int i, j, temp;
 	int y, cr, cb;
-	printf("\n ?YCC: %d %d %d \n\n", ycc[254][254][0], ycc[254][62][1], ycc[254][62][2]);
+	printf("\n ?YCC: %d %d %d \n\n", ycc[254][254][0], ycc[254][63][1], ycc[254][63][2]);
 	for(i = 0; i < W; i++) {
 		for(j = 0; j < H; j++) {
 			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			if( i == W-1 && j == H-1) printf("\n temp: %d \n\n", temp);
 			y = ycc[i][j][0] - 16;
 			if( j % 4 == 0) {
 				temp = j/4;
@@ -94,11 +95,11 @@ void YCCtoRGB(int ycc[W][H][BGR], int rgb[W][H][BGR]) {
 			rgb[i][j][1] = check_range(rgb[i][j][1], 0, 255);
 			rgb[i][j][2] = check_range(rgb[i][j][2], 0, 255);
 
-			if (i < 5 && j < 5) {
-				printf("%d %d %d \n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
-				printf("%d %d %d \n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
-			}
-			if (i < 5 && j == 5) printf("\n");
+			// if (i < 5 && j < 5) {
+			// 	printf("%d %d %d \n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
+			// 	printf("%d %d %d \n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
+			// }
+			// if (i < 5 && j == 5) printf("\n");
 			if( i == W-1 && j == H-1) printf("\n YCC: %d %d %d \n\n", ycc[i][j][0], ycc[i][temp][1], ycc[i][temp][2]);
 			if( i == W-1 && j == H-1) printf("\n RGB: %d %d %d \n\n", rgb[i][j][0], rgb[i][j][1], rgb[i][j][2]);
 		}
@@ -145,8 +146,8 @@ int main(int argc, char *argv[]) {
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	YCCtoRGB(ycc,rgb);
-	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
-	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
+	printf("\n rgb: %d %d %d \n", rgb[W-1][H-1][0], rgb[W-1][H-1][1], rgb[W-1][H-1][2]);
+	// printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 
 
 
@@ -165,8 +166,8 @@ int main(int argc, char *argv[]) {
 	int q=0;
 	for (p = 0; p < H; p++) {
 		for (q = 0; q < W; q++) {
-			libattopng_set_pixel(png, p, q, RGB(ycc[p][q][0] & 255, ycc[p][q][1] & 255, ycc[p][q][2] & 255));
-			//printf("%" PRIx32 ",", RGB(x & 255, y & 255, 128) );
+			libattopng_set_pixel(png, p, q, RGB(rgb[p][q][0] & 255, rgb[p][q][1] & 255, rgb[p][q][2] & 255));
+			// printf("%" PRIx32 ",", RGB(x & 255, y & 255, 128) );
 		}
 		//printf("\n");
 	}

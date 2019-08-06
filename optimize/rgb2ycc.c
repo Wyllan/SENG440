@@ -39,39 +39,25 @@ int main(int argc, char *argv[]) {
 
     int temp_i, temp_j;
     uint8_t r, g, b;
-    for(i = N; i; i--) {
-        for (j = N; j; j--) {
+    for(i = N-1; i; i--) {
+        for (j = N-1; j; j--) {
             r = rgb[i][j][0];
             g = rgb[i][j][1];
             b = rgb[i][j][2];
 
-
             ycc[i][j][0] = (16000 + 257*r + 504*g + 98*b) / 1000;
-            if(ycc[i][j][0] < 16)  {
-                ycc[i][j][0] = 16;
-            }
-            else if (ycc[i][j][0] > 235){
-                ycc[i][j][0] = 235;
-            }
+			ycc[i][j][0] = ycc[i][j][0] < 16 ? 16 : (ycc[i][j][0] > 240 ? 240 : ycc[i][j][0]);
 
             if(i % 2 == 0 || j % 2 == 0) {
                 temp_i = i/2;
                 temp_j = j/2;
 
                 ycc[temp_i][temp_j][1] = (128000 - 148*r - 291*g + 439*b) / 1000;
-                if(ycc[temp_i][temp_j][1] < 16)  {
-                    ycc[temp_i][temp_j][1] = 16;
-                }
-                else if (ycc[temp_i][temp_j][1] > 240){
-                    ycc[temp_i][temp_j][1] = 240;
-                }
+				ycc[temp_i][temp_j][1] = ycc[temp_i][temp_j][1] < 16 ? 16 : (ycc[temp_i][temp_j][1] > 240 ? 240 : ycc[temp_i][temp_j][1]);
+
                 ycc[temp_i][temp_j][2] = (128000 + 439*r - 368*g - 71*b) / 1000;
-                if(ycc[temp_i][temp_j][2] < 16)  {
-                    ycc[temp_i][temp_j][2] = 16;
-                }
-                else if (ycc[temp_i][temp_j][2] > 240){
-                    ycc[temp_i][temp_j][2] = 240;
-                }
+				ycc[temp_i][temp_j][2] = ycc[temp_i][temp_j][2] < 16 ? 16 : (ycc[temp_i][temp_j][2] > 240 ? 240 : ycc[temp_i][temp_j][2]);
+
             }
         }
     }

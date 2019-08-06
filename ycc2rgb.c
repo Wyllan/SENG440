@@ -113,7 +113,7 @@ int interpolate(int val, int i, int j) {
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
-	fp = fopen("rgbMatrix.txt", "r"); // read mode
+	fp = fopen("yccMatrix.txt", "r"); // read mode
 	if (fp == NULL){
 		perror("NO such file\n");
 		exit(EXIT_FAILURE);
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
 			char *end_space;
 			char *token_space = strtok_r(token_comma, " ", &end_space);
 			for (k = 0; (token_space != NULL) || k < BGR; k++) {
-				rgb[i][j][k] = atoi(token_space);
+				ycc[i][j][k] = atoi(token_space);
 				token_space = strtok_r(NULL, " ", &end_space);
 			}
 			token_comma = strtok_r(NULL, ",", &end_comma);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
-	RGBtoYCC(rgb, ycc);
+	//RGBtoYCC(rgb, ycc);
 	printf("\n rgb: %d %d %d \n", rgb[0][0][0], rgb[0][0][1], rgb[0][0][2]);
 	printf(" ycc: %d %d %d \n\n", ycc[0][0][0], ycc[0][0][1], ycc[0][0][2]);
 	YCCtoRGB(ycc,rgb);
